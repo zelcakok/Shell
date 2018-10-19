@@ -4,46 +4,69 @@ class IO {
   constructor(){
     this.enquirer = new Enquirer();
     this.enquirer.register('password', require('prompt-password'));
+
+    this.msgQueue = [];
+    this.msgControl = setInterval(()=>{
+      this.floodMsg();
+    }, 5000);
   }
 
-  set(key, question, isMarked = false){
+  set(key, question, isMasked = false){
     return this.enquirer.set({
-      type: isMarked? 'password' : 'input',
+      type: isMasked? 'password' : 'input',
       message: question,
       name: key
     })
   }
 
-  test(){
-    this.enquirer.ask();
-  }
-
-  ask(key, question, isMarked = false){
+  ask(key, question, isMasked = false){
     return this.enquirer.ask({
-      type: isMarked? 'password' : 'input',
+      type: isMasked? 'password' : 'input',
       message: question,
       name: key
     })
   }
 
   asks(questions, index = 0, responses = null){
-    return new Promise((resolve, reject)=>{
-      var resList = responses? responses : new Object();
-      var key = Object.keys(questions)[index];
-      if(!questions.hasOwnProperty(key)) return resolve(responses);
-      this.enquirer.ask({
-        type: questions[key].isMarked? 'password' : 'input',
-        message: questions[key].question,
-        name: key
-      }).then((res)=>{
-        resList[key] = res[key];
-        resolve(this.asks(questions, ++index, resList))
-      })
-    });
+     return new Promise((resolve, reject)=>{
+       var resList = responses? responses : new Object();
+       var key = Object.keys(questions)[index];
+       if(!questions.hasOwnProperty(key)) return resolve(responses);
+       this.enquirer.ask({
+         type: questions[key].isMasked? 'password' : 'input',
+         message: questions[key].question,
+         name: key
+       }).then((res)=>{
+         resList[key] = res[key];
+         resolve(this.asks(questions, ++index, resList))
+       })
+     });
+   }
+
+
+  pushMsg(msg){
+    this.msgQueue.push(msg);
+  }
+
+  floodMsg(){
+    this.msgQueue.forEach((msg)=>{
+      console.log(msg);
+    })
+    this.msgQueue = [];
   }
 
   print(msg){
     console.log(msg);
+  }
+
+  init(){
+    this.enquirer = new Enquirer();
+    this.enquirer.register('password', require('prompt-password'));
+  }
+
+  reset(){
+    delete this.enquirer;
+    this.init();
   }
 }
 module.exports = IO;
