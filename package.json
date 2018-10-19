@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "enquirer": "^1.0.3",
+    "firebase": "^5.5.5",
     "moment": "^2.22.2",
     "prompt-password": "^1.2.0"
   }

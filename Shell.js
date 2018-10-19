@@ -1,10 +1,12 @@
 const { spawn } = require('child_process');
 const IO = require("./IO");
+const Auth = require("./Auth");
 
 class Shell {
-  constructor(label = "BLK", loadOpt = true){
+  constructor(label = "Blockchain [Login required]", loadOpt = true){
     this.io = new IO();
     this.operations = new Object();
+    this.auth = Auth.getInstance();
     this.label = label;
     if(loadOpt) this.loadStandardOpt();
   }
@@ -52,7 +54,7 @@ class Shell {
       upgrade: {
         Desc: "upgrade | Upgrade Blockchain client.",
         func: async ()=>await this.upgrade()
-      }      
+      }
     }
     this.addOperations(operations);
   }
@@ -67,12 +69,26 @@ class Shell {
         isMasked: true
       }
     }
-    await this.io.asks(questions).then((res)=>{
-      console.log("CALL FIREBASE HERE:", res);
-    })
+    return new Promise((resolve, reject)=>{
+      this.io.asks(questions).then((res)=>{
+        this.auth.emailAuth(res.email, res.password).then((cred)=>{
+          this.io.pushMsg("Login successful");
+          this.setLabel("Blockchain [" + cred.user.email.split("@")[0]+"]");
+          setTimeout(()=>{
+            resolve();
+          }, 1500);
+        }).catch((err)=>{
+          this.io.pushMsg("Login failure");
+          setTimeout(()=>{
+            resolve();
+          }, 1500);
+        })
+      })
+    });
   }
 
   async upgrade(){
+    this.io.pushMsg("Checking with Git Lab, please wait...");
     return new Promise((resolve, reject)=>{
       const gitpull = spawn('git', ['pull', '-f']);
       gitpull.stdout.on('data', (data) => {
@@ -80,7 +96,9 @@ class Shell {
       });
       gitpull.on('close', (code) => {
         this.io.pushMsg("Blockchain client upgrade ended with code " + code);
-        resolve();
+        setTimeout(()=>{
+          resolve();
+        }, 1500);
       });
     });
   }
@@ -107,6 +125,10 @@ class Shell {
         this.prompt();
       }
     }).catch((err)=>console.log(err))
+  }
+
+  setLabel(label){
+    this.label = label;
   }
 }
 module.exports = Shell;
