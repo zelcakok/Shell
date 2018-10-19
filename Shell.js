@@ -52,7 +52,7 @@ class Shell {
       upgrade: {
         Desc: "upgrade | Upgrade Blockchain client.",
         func: async ()=>await this.upgrade()
-      }
+      }      
     }
     this.addOperations(operations);
   }
@@ -76,10 +76,11 @@ class Shell {
     return new Promise((resolve, reject)=>{
       const gitpull = spawn('git', ['pull', '-f']);
       gitpull.stdout.on('data', (data) => {
-        this.io.pushMsg(data);
+        this.io.pushMsg(data.toString());
       });
       gitpull.on('close', (code) => {
         this.io.pushMsg("Blockchain client upgrade ended with code " + code);
+        resolve();
       });
     });
   }

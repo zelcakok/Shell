@@ -8,7 +8,7 @@ class IO {
     this.msgQueue = [];
     this.msgControl = setInterval(()=>{
       this.floodMsg();
-    }, 5000);
+    }, 1000);
   }
 
   set(key, question, isMasked = false){
