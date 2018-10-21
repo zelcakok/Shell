@@ -24,35 +24,35 @@ class Shell {
   loadStandardOpt(){
     var operations = {
       echo: {
-        Desc: "echo [arg] | echo message.",
+        Desc: "[msg]".padEnd(20) + "Print message.",
         func: (...msg)=>{
           msg = msg.slice(1);
           console.log(msg.join(" "));
         }
       },
       clear: {
-        Desc: "clear | Clear the console.",
+        Desc: "NULL".padEnd(20) + "Clear the console.",
         func: ()=>console.clear(),
       },
       help: {
-        Desc: "help | List all commands",
+        Desc: "NULL".padEnd(20) + "List all commands.",
         func: ()=>{
-          console.log("Command\t\tDescription\n");
+          console.log("Command".padEnd(9) + "Argument(s)".padEnd(20) + "Description\n");
           Object.keys(operations).map((cmd)=>{
-            console.log(cmd + "\t\t" + operations[cmd].Desc);
+            console.log(cmd.padEnd(9) + operations[cmd].Desc);
           })
         }
       },
       exit: {
-        Desc: "exit | Exit Blockchain",
+        Desc: "NULL".padEnd(20) + "Exit Blockchain system.",
         func: ()=>process.exit(0)
       },
       login: {
-        Desc: "login | Login to Blockchain system.",
+        Desc: "NULL".padEnd(20) + "Login to Blockchain system.",
         func: async ()=>await this.login()
       },
       upgrade: {
-        Desc: "upgrade | Upgrade Blockchain client.",
+        Desc: "NULL".padEnd(20) + "Upgrade Blockchain system",
         func: async ()=>await this.upgrade()
       }
     }
