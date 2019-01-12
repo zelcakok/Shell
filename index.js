@@ -1,10 +1,12 @@
 const Shell = require("./Shell");
 
-var shell = new Shell("Blockchain [Login required]");
+var shell = new Shell();
+var opt = {
+  test: {
+    Desc: Shell.desc("Testing"),
+    func: ()=>console.log("A")
+  }
+}
+shell.setLabel("Autoencoder")
+shell.addOperation("test", opt["test"])
 shell.prompt();
-
-// var msg = "ABC".padEnd(10);
-// console.log(msg + " | Data");
-//
-// msg = "DEFGH".padEnd(10);
-// console.log(msg + " | Data");

@@ -1,14 +1,16 @@
 const { spawn } = require('child_process');
 const IO = require("./IO");
-const Auth = require("./Auth");
 
 class Shell {
-  constructor(label = "Blockchain [Login required]", loadOpt = true){
+  constructor(label = "", loadOpt = true){
     this.io = new IO();
     this.operations = new Object();
-    this.auth = Auth.getInstance();
     this.label = label;
     if(loadOpt) this.loadStandardOpt();
+  }
+
+  static desc(msg){
+    return Shell.desc(msg;
   }
 
   addOperation(key, func){
@@ -21,86 +23,31 @@ class Shell {
     })
   }
 
+  setLabel(label){
+    this.label = label;
+  }
+
   loadStandardOpt(){
     var operations = {
-      echo: {
-        Desc: "[msg]".padEnd(20) + "Print message.",
-        func: (...msg)=>{
-          msg = msg.slice(1);
-          console.log(msg.join(" "));
-        }
-      },
       clear: {
-        Desc: "NULL".padEnd(20) + "Clear the console.",
+        Desc: Shell.desc("Clear the console."),
         func: ()=>console.clear(),
       },
       help: {
-        Desc: "NULL".padEnd(20) + "List all commands.",
+        Desc: Shell.desc("List all commands."),
         func: ()=>{
           console.log("Command".padEnd(9) + "Argument(s)".padEnd(20) + "Description\n");
-          Object.keys(operations).map((cmd)=>{
-            console.log(cmd.padEnd(9) + operations[cmd].Desc);
+          Object.keys(this.operations).map((cmd)=>{
+            console.log(cmd.padEnd(9) + this.operations[cmd].Desc);
           })
         }
       },
       exit: {
-        Desc: "NULL".padEnd(20) + "Exit Blockchain system.",
+        Desc: Shell.desc("Exit Blockchain system."),
         func: ()=>process.exit(0)
-      },
-      login: {
-        Desc: "NULL".padEnd(20) + "Login to Blockchain system.",
-        func: async ()=>await this.login()
-      },
-      upgrade: {
-        Desc: "NULL".padEnd(20) + "Upgrade Blockchain system",
-        func: async ()=>await this.upgrade()
       }
     }
     this.addOperations(operations);
-  }
-
-  async login(){
-    var questions = {
-      email: {
-        question: "Email"
-      },
-      password: {
-        question: "Password",
-        isMasked: true
-      }
-    }
-    return new Promise((resolve, reject)=>{
-      this.io.asks(questions).then((res)=>{
-        this.auth.emailAuth(res.email, res.password).then((cred)=>{
-          this.io.pushMsg("Login successful");
-          this.setLabel("Blockchain [" + cred.user.email.split("@")[0]+"]");
-          setTimeout(()=>{
-            resolve();
-          }, 1500);
-        }).catch((err)=>{
-          this.io.pushMsg("Login failure");
-          setTimeout(()=>{
-            resolve();
-          }, 1500);
-        })
-      })
-    });
-  }
-
-  async upgrade(){
-    this.io.pushMsg("Checking with Git Lab, please wait...");
-    return new Promise((resolve, reject)=>{
-      const gitpull = spawn('git', ['pull', '-f']);
-      gitpull.stdout.on('data', (data) => {
-        this.io.pushMsg(data.toString());
-      });
-      gitpull.on('close', (code) => {
-        this.io.pushMsg("Blockchain client upgrade ended with code " + code);
-        setTimeout(()=>{
-          resolve();
-        }, 1500);
-      });
-    });
   }
 
   react(cmd){

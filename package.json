@@ -1,17 +1,29 @@
 {
-  "name": "shell",
-  "version": "1.0.0",
-  "description": "",
+  "name": "zetashell",
+  "version": "0.0.1",
+  "description": "A simple shell plugin.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Kok Tsz Ho Zelca",
   "license": "ISC",
   "dependencies": {
     "enquirer": "^1.0.3",
     "firebase": "^5.5.5",
     "moment": "^2.22.2",
     "prompt-password": "^1.2.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/koktszhozelca/shell.git"
+  },
+  "keywords": [
+    "Shell"
+  ],
+  "bugs": {
+    "url": "https://gitlab.com/koktszhozelca/shell/issues"
+  },
+  "homepage": "https://gitlab.com/koktszhozelca/shell#readme"
 }
